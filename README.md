@@ -5,9 +5,9 @@ This Proof of Concept (POC) demonstrates the utilization of prebuilt-ffi modules
 ### Running the Application
 
 1) Clone the [custom-mod-proxy-server repository](https://github.com/aarshkshah1992/custom-mod-proxy-server). This sets up a local Go Module Proxy Server on port `8080` that:
-        a) Redirects requests for all Go modules to the Google Go Proxy server, except for the module `github.com/aarshkshah1992/prebuilt-ffi-darwin-arm64`.
-        b) Serves the `github.com/aarshkshah1992/prebuilt-ffi-darwin-arm64` module directly as a zip file. This zip file is included with the repository. Alternatively, you can create it manually by following these steps:
-            - Clone the repository from `https://github.com/aarshkshah1992/prebuilt-ffi-darwin-arm64`.
+    - Redirects requests for all Go modules to the Google Go Proxy server, except for the module `github.com/aarshkshah1992/prebuilt-ffi-darwin-arm64`.
+    - Serves the `github.com/aarshkshah1992/prebuilt-ffi-darwin-arm64` module directly as a zip file. This zip file is included with the repository. Alternatively, you can create it manually by following these steps:
+        - Clone the repository from `https://github.com/aarshkshah1992/prebuilt-ffi-darwin-arm64`.
             - Build the source as described in the [README](https://github.com/aarshkshah1992/prebuilt-ffi-darwin-arm64).
             - Completely remove the `rust/target` directory.
             - Execute the script from [prebuilt-ffi-zipper](https://github.com/aarshkshah1992/prebuilt-ffi-zipper), ensuring to update the path and version as necessary.
