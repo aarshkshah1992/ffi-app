@@ -15,7 +15,11 @@ a prebuilt ffi module for [darwin + arm64](https://github.com/aarshkshah1992/pre
 
 2) Run `export GOPROXY=http://localhost:8080` as we need go tooling to use the local go module proxy instead of the default Google go module proxy. This wont be needed once we use DNS.
 
-Run the app -> it should just work
+Run the app -> it should just work.
 
 Note that the app depends on a forked `filecoin-ffi` module at https://github.com/aarshkshah1992/filecoin-ffi which in turns depends on the `prebuilt-ffi-darwin-arm64` module. This is as per the design discussed in https://hackmd.io/@mvdan/Hy7iK0TEY.
+
+Please note that there is a known issue of a `go.sum` mismatch when downloading the `github.com/aarshkshah1992/prebuilt-ffi-darwin-arm64` dependency using Go modules. This occurs because the repository is hosted on GitHub, which is where the Google checksum server retrieves its checksums, but lacks the prebuilt assets. Instead, the actual zip file for the module, which includes the pre-built assets, is served from our local module server. This discrepancy is expected to be resolved once we transition to using DNS, allowing both the Google checksum server and our custom Go module server to source the pre-built ffi module from the same location.
+
+For this proof of concept, the issue has been temporarily addressed by manually updating the checksum for the prebuilt-ffi module in the `go.sum` file of this app.
 
