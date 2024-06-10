@@ -2,7 +2,7 @@ github.com/BurntSushi/toml v0.3.1 h1:WXkYYl6Yr3qBf1K79EBnL4mak0OimBfB0XUf9Vl28OQ
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/aarshkshah1992/filecoin-ffi v0.0.3 h1:kyKfhcaMrkOeG1CnxZzWVvwi3lKDxMnZOJW/edXA8QA=
 github.com/aarshkshah1992/filecoin-ffi v0.0.3/go.mod h1:BTFgClCj3/KV9sv4PI9wXnVA80CTaGanfWTu1mRHKac=
-github.com/aarshkshah1992/prebuilt-ffi-darwin-arm64 v0.0.2 h1:cuCq8BC7h2y/tCIKYhGcoVrSuJ7qyvzSje8MFbBT8uQ=
+github.com/aarshkshah1992/prebuilt-ffi-darwin-arm64 v0.0.2 h1:63fopySWs6goE8jrEk9TxAr4XBw5unX1LfwfLlXL96Y=
 github.com/aarshkshah1992/prebuilt-ffi-darwin-arm64 v0.0.2/go.mod h1:CApjIcqCiAcRBh97Bpz/tRKhwqDg8z9u9/3LSgyJ1Z4=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
