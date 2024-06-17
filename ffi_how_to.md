@@ -79,19 +79,18 @@ The high level steps to create these assets for each `prebuilt-ffi-{GOOS}-{GOARC
 5. Zip it up using something like `https://github.com/aarshkshah1992/prebuilt-ffi-zipper` (the directories inside the zip just need to follow a specific hierarchy)
 5. Publish the `prebuilt_bls_{GOOS}_{GOARCH}.zip`, `prebuilt_bls_{GOOS}_{GOARCH}.mod` and `prebuilt_bls_{GOOS}_{GOARCH}.info` files to the Github release assets page for the `filecoin-ffi` repo
 
-### Building and hosting a lightweight custom Go Module Proxy at the module DNS/namespace
 
-We need a lightweight minimal HTTPs server running at `https://prebuilt-ffi.io` that can serve the `prebuilt-ffi-{GOOS}-{GOARCH}` modules as zip files for each supported combination of (GOOS + GOARCH).
+### Running a light weight HTTPs server/module proxy to serve the prebuilt modules to go tooling
+A minimal HTTPS server(referred to as a "module proxy" in the Go world) must be run at `https://fil.org` to serve the `fil.org/prebuilt-ffi-{GOOS}-{GOARCH}` Go modules to Go tooling. This server could be implemented using a Cloudflare Worker or a custom-managed HTTPS server.
 
-### Running a light weight custom module proxy
-A minimal HTTPS server(referred to as a "module proxy" in the Go world) must be established at `https://fil.org` to serve all the `fil.org/prebuilt-ffi-{GOOS}-{GOARCH}` Go modules to go tooling. This server could be implemented using a Cloudflare Worker or a custom-managed HTTPS server.
+This server is essential because the Google Go Module Proxy does not accommodate custom domains, and GOPROXY in `direct` mode cannot retrieve modules directly from `https://fil.org` since the modules and pre-built assets will be hosted on GitHub. To address this, we need a redirection mechanism from `https://fil.org` to the appropriate GitHub URLs/assets. Fortunately, Go tooling is capable of handling 3XX redirects, allowing all module requests to `https://fil.org` to be redirected to the respective GitHub URLs/assets. This redirection ensures that the server incurs minimal ingress/egress/compute costs, functioning primarily as a redirecting proxy.
 
-This server is essential because the Google Go Module Proxy does not accommodate custom domains, and GOPROXY in `direct` mode cannot retrieve modules directly from `https://fil.org` since the modules and pre-built assets will be hosted/persisted on GitHub. To address this, we need a redirection mechanism from `https://fil.org` to the appropriate GitHub URLs/assets. Fortunately, Go tooling is capable of handling 3XX redirects, allowing all module requests from `https://fil.org` to be redirected to the respective GitHub URLs/assets. This redirection ensures that the module server incurs minimal ingress/egress/compute costs, functioning primarily as a redirecting proxy.
+**This server will have to serve the following APIs:** so that it implements the `GOPROXY` protocol
+See https://go.dev/ref/mod#goproxy-protocol for more details
 
-**This server will have to serve the following APIs:**
 1. GET https://fil.org/prebuilt-ffi-{GOOS}-{GOARCH}?go-get=1
 
-This API must respond with the following HTML which specifies the URL go tooling should fetch the module assets from
+This API must respond with the following HTML which specifies the URL go tooling should fetch the module assets from:
 
 ```html
 <meta name="go-import" content="fil.org/prebuilt-ffi-{GOOS}-{GOARCH} mod https://fil.org">
@@ -100,18 +99,16 @@ Go tooling will now use the URL specified in the above response and send the fol
 
 2. GET https://fil.org/fil.org/prebuilt-ffi-{GOOS}-{GOARCH}/@v/{$version}.info
 
-Here `{$version}` refers to the go module semver. More details about what this and the the APIs enlisted below
-need to return can be found at https://go.dev/ref/mod#goproxy-protocol. The important point here is that
-this API can be implemented by doing a redirect to the Google Module proxy.
+Here `{$version}` refers to the go module semver. More details about what this and the the APIs enlisted below need to return can be found at https://go.dev/ref/mod#goproxy-protocol. 
 
-This redirects to the `prebuilt-ffi-{GOOS}-{GOARCH}.info` file in release assets
+The important point here is that this API can be implemented by doing a redirect to the corresponding `prebuilt-ffi-{GOOS}-{GOARCH}.info` file in release assets for `filcoin-ffi`.
 
-3. GET https://module.fil.org/fil.org/prebuilt-ffi-{GOOS}-{GOARCH}/@v/{$version}.mod
+3. GET https://fil.org/fil.org/prebuilt-ffi-{GOOS}-{GOARCH}/@v/{$version}.mod
 
-This redirects to the `prebuilt-ffi-{GOOS}-{GOARCH}.mod` file in release assets
+This redirects to the `prebuilt-ffi-{GOOS}-{GOARCH}.mod` file in release assets for `filcoin-ffi`.
 
-4. GET https://module.fil.org/fil.org/prebuilt-ffi-{GOOS}-{GOARCH}/@v/{$version}.zip
+4. GET https://fil.org/fil.org/prebuilt-ffi-{GOOS}-{GOARCH}/@v/{$version}.zip
 
-This redirects to the `prebuilt-ffi-{GOOS}-{GOARCH}.zip` file in release assets
+This redirects to the `prebuilt-ffi-{GOOS}-{GOARCH}.zip` file in release assets for `filcoin-ffi`.
 
 Note that one limitation of the above approach is that users will not be able to depend on unqualified/`latest` versions of prebuit-ffi.
