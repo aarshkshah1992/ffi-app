@@ -69,15 +69,16 @@ In addition to the pre-built zip modules, we will also need to publish the corre
 We already have some flavour of this today. See the `Assets` section [here](https://github.com/filecoin-project/filecoin-ffi/releases/tag/ed08caaf8778e1b6).
 
 
-The high level steps to create these assets for each `prebuilt-ffi-{GOOS}-{GOARCH}` module are as follows:
+The high level steps to create these assets for each `prebuilt-ffi-{GOOS}-{GOARCH}` module are as follows.
+For each release `vx.y.z` for `filecoin-ffi`:
 
-1. Clone `filecoin-ffi` source on a machine with {GOOS}X and {GOARCH}Y.
+1. Clone `filecoin-ffi-vx.y.z` source on a machine with {GOOS}X and {GOARCH}Y.
 2. Remove all the `prebuilt_*` files
 3. Build it from source to create the prebuilt assets
 4. Remove all the transient build assets in `rust/target` dir
-5. Create the `prebuilt_bls_{GOOS}_{GOARCH}.info` and `prebuilt_bls_{GOOS}_{GOARCH}.mod` files (the latter can be created by removing the existing `go.mod` file and running `go mod tidy` to generate a new one)
+5. Create the `prebuilt_bls_{GOOS}_{GOARCH}-{vx.y.z}.info` and `prebuilt_bls_{GOOS}_{GOARCH}-{vx.y.z}.mod` files (the latter can be created by removing the existing `go.mod` file and running `go mod tidy` to generate a new one)
 5. Zip it up using something like `https://github.com/aarshkshah1992/prebuilt-ffi-zipper` (the directories inside the zip just need to follow a specific hierarchy)
-5. Publish the `prebuilt_bls_{GOOS}_{GOARCH}.zip`, `prebuilt_bls_{GOOS}_{GOARCH}.mod` and `prebuilt_bls_{GOOS}_{GOARCH}.info` files to the Github release assets page for the `filecoin-ffi` repo
+5. Publish the `prebuilt_bls_{GOOS}_{GOARCH}-{vx.y.z}.zip`, `prebuilt_bls_{GOOS}_{GOARCH}-{vx.y.z}.mod` and `prebuilt_bls_{GOOS}_{GOARCH}-{vx.y.z}.info` files to the Github release assets page for the `filecoin-ffi` repo
 
 
 ### Running a light weight HTTPs server/module proxy to serve the prebuilt modules to go tooling
@@ -101,14 +102,14 @@ Go tooling will now use the URL specified in the above response and send the fol
 
 Here `{$version}` refers to the go module semver.
 
-The important point here is that this API can be implemented by doing a redirect to the corresponding `prebuilt-ffi-{GOOS}-{GOARCH}.info` file in release assets for `filcoin-ffi`.
+The important point here is that this API can be implemented by doing a redirect to the corresponding `prebuilt-ffi-{GOOS}-{GOARCH}.info` file in release assets for `filcoin-ffi` based on the `{$version}` requested here.
 
 3. GET https://fil.org/fil.org/prebuilt-ffi-{GOOS}-{GOARCH}/@v/{$version}.mod
 
-This redirects to the `prebuilt-ffi-{GOOS}-{GOARCH}.mod` file in release assets for `filcoin-ffi`.
+This redirects to the `prebuilt-ffi-{GOOS}-{GOARCH}.mod` file in release assets for `filcoin-ffi` based on the `{$version}` requested here.
 
 4. GET https://fil.org/fil.org/prebuilt-ffi-{GOOS}-{GOARCH}/@v/{$version}.zip
 
-This redirects to the `prebuilt-ffi-{GOOS}-{GOARCH}.zip` file in release assets for `filcoin-ffi`.
+This redirects to the `prebuilt-ffi-{GOOS}-{GOARCH}.zip` file in release assets for `filcoin-ffi` based on the `{$version}` requested here.
 
 Note that one limitation of the above approach is that users will not be able to depend on unqualified/`latest` versions of prebuit-ffi.
