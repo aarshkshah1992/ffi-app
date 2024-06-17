@@ -19,7 +19,7 @@ prebuilt_bls_darwin_arm64.go
 // +build !ffi_source
 package ffi
 import (
-	prebuilt "module.fil.org/prebuilt-ffi-darwin-arm64"
+	prebuilt "fil.org/prebuilt-ffi-darwin-arm64"
     // When building for darwin/arm64, Go tooling automatically selects this file due to the specified build 
     // tags. It then fetches the "prebuilt-ffi-darwin-arm64" module from the module proxy, using the version 
     // specified in the `go.mod` file.
@@ -38,7 +38,7 @@ prebuilt_bls_linux_amd64.go
 // +build !ffi_source
 package ffi
 import (
-	prebuilt "module.fil.org/prebuilt-ffi-linux-amd64"
+	prebuilt "fil.org/prebuilt-ffi-linux-amd64"
 )
 
 // Hash computes the digest of a message
@@ -63,7 +63,7 @@ The logical next question to ask is how are the `prebuilt-ffi-{GOOS}-{GOARCH}` m
 
 For each release of `filecoin-ffi`, CI will build and publish the corresponding `prebuilt-ffi-{GOOS}-{GOARCH}` modules as "go mod compatible zip files" to the Github release assets page for `filecoin-ffi` for each supported combination of (GOOS + GOARCH).
 
-In addition to the pre-built zip modules, we will also need to publish the corresponding `go.mod` and "info" meta for each pre-built module (go tooling needs these -> more details in the Go Module Proxy section below) . These can be created synthetically and can be persisted in the Github release assets as well.
+In addition to the pre-built zip modules, we will also need to publish the corresponding `go.mod` and "info" meta for each pre-built module (go tooling needs these -> more details in the `Go Module Proxy` section below) . These can be created synthetically and can be persisted in the Github release assets as well.
 
 
 We already have some flavour of this today. See the `Assets` section [here](https://github.com/filecoin-project/filecoin-ffi/releases/tag/ed08caaf8778e1b6).
@@ -85,12 +85,12 @@ A minimal HTTPS server(referred to as a "module proxy" in the Go world) must be 
 
 This server is essential because the Google Go Module Proxy does not accommodate custom domains, and GOPROXY in `direct` mode cannot retrieve modules directly from `https://fil.org` since the modules and pre-built assets will be hosted on GitHub. To address this, we need a redirection mechanism from `https://fil.org` to the appropriate GitHub URLs/assets. Fortunately, Go tooling is capable of handling 3XX redirects, allowing all module requests to `https://fil.org` to be redirected to the respective GitHub URLs/assets. This redirection ensures that the server incurs minimal ingress/egress/compute costs, functioning primarily as a redirecting proxy.
 
-**This server will have to serve the following APIs:** so that it implements the `GOPROXY` protocol
-See https://go.dev/ref/mod#goproxy-protocol for more details
+**This server will have to implement the following APIs** so that it implements the `GOPROXY` protocol
+See https://go.dev/ref/mod#goproxy-protocol for more details.
 
 1. GET https://fil.org/prebuilt-ffi-{GOOS}-{GOARCH}?go-get=1
 
-This API must respond with the following HTML which specifies the URL go tooling should fetch the module assets from:
+This API should return the HTML below, which informs the Go tooling of the server URL that implements the `GOPROXY` protocol for the prebuilt modules.
 
 ```html
 <meta name="go-import" content="fil.org/prebuilt-ffi-{GOOS}-{GOARCH} mod https://fil.org">
@@ -99,7 +99,7 @@ Go tooling will now use the URL specified in the above response and send the fol
 
 2. GET https://fil.org/fil.org/prebuilt-ffi-{GOOS}-{GOARCH}/@v/{$version}.info
 
-Here `{$version}` refers to the go module semver. More details about what this and the the APIs enlisted below need to return can be found at https://go.dev/ref/mod#goproxy-protocol. 
+Here `{$version}` refers to the go module semver.
 
 The important point here is that this API can be implemented by doing a redirect to the corresponding `prebuilt-ffi-{GOOS}-{GOARCH}.info` file in release assets for `filcoin-ffi`.
 
