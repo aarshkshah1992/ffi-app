@@ -1,4 +1,4 @@
-This document aims to create a detailed work plan for shipping the `pre-built-ffi` workstream.
+This document aims to create a detailed work plan for shipping the `pre-built-ffi` workstream tracked in https://github.com/filecoin-project/filecoin-ffi/issues/209
 The high level approach for this has already been well documented at https://hackmd.io/@mvdan/Hy7iK0TEY.
 
 ### Changes to https://github.com/filecoin-project/filecoin-ffi
@@ -10,7 +10,7 @@ Currently, `filecoin-ffi` supports multiple (GOOS + GOARCH) combinations. Theref
 Furthermore, it is crucial to ensure complete backward compatibility for current users of `filecoin-ffi`, including those who opt to compile `filecoin-ffi` from the source.
 
 This objective can be achieved using Go build tags. 
-For illustration, consider the existing public `ffi.Hash()` API in the `bls.go` file of `filecoin-ffi`. Below is an outline of the necessary variants for this API:
+For illustration, consider the existing public [`ffi.Hash()` API in the `bls.go` file of `filecoin-ffi`](https://github.com/filecoin-project/filecoin-ffi/blob/master/cgo/bls.go#L11). Below is an outline of the necessary variants for this API:
 
 ```go
 prebuilt_bls_darwin_arm64.go
@@ -66,7 +66,7 @@ For each release of `filecoin-ffi`, CI will build and publish the corresponding 
 In addition to the pre-built zip modules, we will also need to publish the corresponding `go.mod` and "info" meta for each pre-built module (go tooling needs these -> more details in the `Go Module Proxy` section below) . These can be created synthetically and can be persisted in the Github release assets as well.
 
 
-We already have some flavour of this today. See the `Assets` section [here](https://github.com/filecoin-project/filecoin-ffi/releases/tag/ed08caaf8778e1b6).
+We already have some flavour of this today. See the `Assets` section [example](https://github.com/filecoin-project/filecoin-ffi/releases/tag/ed08caaf8778e1b6).
 
 
 The high level steps to create these assets for each `prebuilt-ffi-{GOOS}-{GOARCH}` module are as follows.
